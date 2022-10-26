@@ -1,0 +1,18 @@
+theaterName :
+reserverId: [] 
+area: 
+
+__________________
+Screen Model
+screenName
+status:
+
+__________________
+ScreenId
+movieId:
+showTimeId []
+status:
+
+
+startDate :
+endDate : 
