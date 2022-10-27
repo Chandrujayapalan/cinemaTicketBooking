@@ -12,9 +12,12 @@ const screenSchema = new Schema({
         ref: "Theater",
         required: true,
     },
-    seatId: {
-        type: Schema.Types.ObjectId,
-        ref: "Seat",
+    seats: {
+        type: Number,
+        required: true,
+    },
+    ticketPrice : {
+        type: Number,
         required: true,
     },
     status: {

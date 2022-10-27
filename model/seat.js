@@ -3,41 +3,34 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const seatSchema = new Schema({
-    // showTimeId: {
-    //     type: Schema.Types.ObjectId, 
-    //     ref: "ShowTime",
-    //     required: true,
-    // },
-    // movieId: {
+    screenId: {
+        type: Schema.Types.ObjectId,
+        ref: "Theater",
+        required: true,
+    },
+    seatNo: {
+        type: Number
+    },
+    // bookingId: {
     //     type: Schema.Types.ObjectId,
-    //     ref: "Movie",
+    //     ref: "Booking",
     //     required: true,
     // },
-    totalSeat: [{
-        seatNo: {
-            type: Number
-        },
-        status: {
-            type: Boolean,
-             default: false
-        },
-    }],
-    // totalSeat: {
-    //     type: Array,
-    //     // required: true   
-    // },
-    seatsRemaining: {
-        type: Number,
-        // required: true   
+    showTimeId: {
+        type: Schema.Types.ObjectId,
+        ref: "ShowTime",
+        required: true,
     },
-    TicketPrice: {
-        type: Number,
-        required: true
+    userId :{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
     },
-    
-    
-},
-    { timestamps: true })
+    status: {
+        type: Boolean,
+        def : true
+    },
+}, { timestamps: true })
 const Seat = mongoose.model('Seat', seatSchema)
 
 module.exports = Seat

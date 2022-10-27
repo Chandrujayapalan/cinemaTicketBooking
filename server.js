@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const bodyparser = require('body-parser')
-const controller = require('./routes/routes')
+const routers = require('./routes')
 const cors = require('cors')
 require("dotenv/config");
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Headers", "*");
     next();
 });
-
+routers(app)
 const PORT = process.env.PORT || 5002
 app.listen(PORT, () => {
     console.log(`server is running ${PORT}`)
@@ -35,4 +35,3 @@ app.get("/", (req, res) => {
         message: 'Api Running!'
     })
 });
-app.use('/api', controller)

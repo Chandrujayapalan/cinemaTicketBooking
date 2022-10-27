@@ -14,7 +14,7 @@ const authenticating = (req, res, next) => {
         })
     }
 }
-const admin = (req, res, next) => {
+const subAdmin = (req, res, next) => {
     try {
         let check = req.user.userType
         if (check === 2) {
@@ -33,7 +33,7 @@ const admin = (req, res, next) => {
     }
 }
 
-const supAdmin = (req, res, next) => {
+const admin = (req, res, next) => {
     try {
         let check = req.user.userType
         if (check === 1) {
@@ -71,4 +71,4 @@ const user = (req, res, next) => {
 }
 
 
-module.exports = { authenticating, supAdmin, admin, user }
+module.exports = { authenticating, subAdmin, admin, user }

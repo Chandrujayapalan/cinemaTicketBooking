@@ -147,7 +147,7 @@ const createShowTiming = async (req, res, next) => {
             // endDate: endDate
 
 
-
+            
         })
         await show.save()
         return res.status(200).json({
@@ -171,39 +171,39 @@ const createShowTiming = async (req, res, next) => {
     }
 }
 
-// const createScreen = async (req, res, next) => {
-//     try {
-//         let { screenName, theaterId, seatId } = req.body
+const createScreen = async (req, res, next) => {
+    try {
+        let { screenName, theaterId, seatId } = req.body
 
-//         let getScreen = await Screen.find({ theaterId: theaterId })
-//         getScreen = getScreen.find(a => a.screenName === screenName)
+        let getScreen = await Screen.find({ theaterId: theaterId })
+        getScreen = getScreen.find(a => a.screenName === screenName)
 
-//         if (!getScreen) {
-//             let screen = new Screen({
-//                 theaterId: theaterId,
-//                 screenName: screenName,
-//                 seatId: seatId
-//             })
-//             await screen.save()
-//             return res.status(200).json({
-//                 status: 200,
-//                 message: 'Added successfully',
-//                 data: screen
-//             })
-//         } else {
-//             return res.json({ status: 400, message: "Already exists" })
+        if (!getScreen) {
+            let screen = new Screen({
+                theaterId: theaterId,
+                screenName: screenName,
+                seatId: seatId
+            })
+            await screen.save()
+            return res.status(200).json({
+                status: 200,
+                message: 'Added successfully',
+                data: screen
+            })
+        } else {
+            return res.json({ status: 400, message: "Already exists" })
 
-//         }
+        }
 
-//     } catch (error) {
-//         console.log(error)
-//         return res.status(400).json({
-//             status: 400,
-//             err: " Something went Wrong",
-//             message: error.message
-//         })
-//     }
-// }
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
 const createSeat = async (req, res, next) => {
     try {
         let { totalSeat, theaterId } = req.body
@@ -559,8 +559,8 @@ module.exports = {
     getAllTheater,
     createMovie,
     createShowTiming,
-    // createScreen,
-    // createReserver,
+    createScreen,
+    createReserver,
     createSeat,
     createTheater,
     getScreen
