@@ -28,7 +28,7 @@ const seatSchema = new Schema({
     },
     status: {
         type: Boolean,
-        def : true
+        default: true
     },
 }, { timestamps: true })
 const Seat = mongoose.model('Seat', seatSchema)

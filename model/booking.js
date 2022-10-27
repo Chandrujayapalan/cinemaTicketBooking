@@ -11,7 +11,7 @@ const bookSchema = new Schema({
         required: true
     },
     dateTime: {
-        type: Date,
+        type: String,
          required: true,
     },
     seatNumber: {

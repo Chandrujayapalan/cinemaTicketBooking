@@ -12,7 +12,7 @@ const theaterSchema = new Schema({
     },
     status :{
         type : Boolean,
-        def : true
+        default: true
 
     }
 },

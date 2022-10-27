@@ -15,6 +15,10 @@ const movieSchema = new Schema({
         type: Date,
         required: true
     },
+    status :{
+        type: Boolean,
+        default :true 
+    }
 },
     { timestamps: true })
 const Movie = mongoose.model('Movie', movieSchema)
