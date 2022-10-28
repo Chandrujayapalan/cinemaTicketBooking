@@ -7,8 +7,7 @@ const regValidator = async (req, res, next) => {
             email: joi.string().email().required(),
             phone: joi.number().required(),
             password: joi.string().required(),
-            userType: joi.number().required(),
-        })
+                 })
         const { error } = option.validate(req.body)
         if (error) {
             return res.status(400).json({
@@ -29,6 +28,26 @@ const logvalidator = async (req, res, next) => {
             password: joi.string().required(),
         })
         const { error } = option.validate(req.body)
+        if (error) {
+            return res.status(400).json({
+                message: error.message
+            })
+        } else {
+            next()
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+const theaterValidator = async (req, res, next) => {
+    try {
+        let option = joi.object().keys({
+            theaterName: joi.string().required(),
+            status: joi.boolean().required(),
+
+        })
+        const { error } = option.validate(req.body)
+        // console.log(option)
         if (error) {
             return res.status(400).json({
                 message: error.message
@@ -127,5 +146,5 @@ const seatValidator = async (req, res, next) => {
     }
 }
 module.exports = {
-    regValidator, logvalidator, movieValidator, showValidator, screenValidator, seatValidator
+    regValidator, logvalidator, theaterValidator,movieValidator, showValidator, screenValidator, seatValidator
 }

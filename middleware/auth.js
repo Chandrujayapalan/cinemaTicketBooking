@@ -9,8 +9,9 @@ const authenticating = (req, res, next) => {
         next()
     }
     catch (error) {
-        res.json({
-            message: 'Authendication failed !'
+        return res.status(403).json({
+            status: 403,
+            message: 'Authendication failed or token expried!'
         })
     }
 }
@@ -20,7 +21,7 @@ const subAdmin = (req, res, next) => {
         if (check === 2) {
             next()
         } else {
-            res.status(403).json({
+            return res.status(403).json({
                 status: 403,
                 message: 'forbidden'
             })
@@ -39,7 +40,7 @@ const admin = (req, res, next) => {
         if (check === 1) {
             next()
         } else {
-            res.status(403).json({
+            return res.status(403).json({
                 status: 403,
                 message: 'forbidden'
             })
@@ -57,7 +58,7 @@ const user = (req, res, next) => {
         if (check === 3) {
             next()
         } else {
-            res.status(403).json({
+            return res.status(403).json({
                 status: 403,
                 message: 'forbidden'
             })

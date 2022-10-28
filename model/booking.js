@@ -10,6 +10,10 @@ const bookSchema = new Schema({
         type: String,
         required: true
     },
+     theaterName: {
+        type: String,
+        required: true
+    },
     dateTime: {
         type: String,
          required: true,

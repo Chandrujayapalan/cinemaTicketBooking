@@ -1,22 +1,27 @@
 const express = require('express')
 const subAdminRouter = express.Router()
-const controller = require('../../controller/screen.controller')
-const signController = require('../../controller/controller')
+const controller = require('../../controller/subAdmin.controller')
 
 const validator = require('../../middleware/validator')
 const auth = require('../../middleware/auth')
 
-subAdminRouter.post("/register", validator.regValidator, signController.register)
-subAdminRouter.post("/login", validator.logvalidator, signController.login)
+subAdminRouter.post("/register", validator.regValidator, controller.register)
+subAdminRouter.post("/login", validator.logvalidator, controller.login)
 
-
-subAdminRouter.post("/screen", [auth.authenticating, auth.subAdmin], controller.createScreen)
-subAdminRouter.get("/screen/:theaterId", [auth.authenticating, auth.subAdmin], controller.getScreen)
-
+subAdminRouter.post("/movie", validator.movieValidator, [auth.authenticating, auth.subAdmin], controller.createMovie)
 subAdminRouter.get("/movie", [auth.authenticating, auth.subAdmin], controller.getMovie)
+
+subAdminRouter.get("/theater", [auth.authenticating, auth.subAdmin], controller.getAllTheater)
+
+subAdminRouter.post("/screen", validator.screenValidator ,[auth.authenticating, auth.subAdmin], controller.createScreen)
+subAdminRouter.get("/screen/:theaterId", [auth.authenticating, auth.subAdmin], controller.getScreen)
 
 
 subAdminRouter.post("/show", [auth.authenticating, auth.subAdmin], controller.createShowTiming)
+subAdminRouter.get("/show", [auth.authenticating, auth.subAdmin], controller.getShow)
+subAdminRouter.put("/show", [auth.authenticating, auth.subAdmin], controller.createShowTiming)
+
+
 
 
 

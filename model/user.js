@@ -24,10 +24,7 @@ const userSchema = new Schema({
     userType: {
         type: Number,
     },
-    // dateTime: {
-    //     type: Date,
-    //     default: moment().format("HH:MM A"),
-    // },
+
 },
     { timestamps: true })
 const User = mongoose.model('User', userSchema)
