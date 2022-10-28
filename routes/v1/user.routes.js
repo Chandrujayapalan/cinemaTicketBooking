@@ -13,8 +13,10 @@ userRouter.post("/login", validator.logvalidator, controller.login)
 userRouter.get("/movie", [auth.authenticating, auth.user], controller.getMovie)
 userRouter.get("/show", [auth.authenticating, auth.user], controller.getShow)
 
-userRouter.post("/seat", [auth.authenticating, auth.user], controller.createSeat)
 userRouter.get("/seat/:screenId/:showTimeId", [auth.authenticating, auth.user], controller.getSeat)
+
+userRouter.post("/booking", [auth.authenticating, auth.user], controller.createBooking)
+
 
 
 

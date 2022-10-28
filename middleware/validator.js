@@ -44,9 +44,7 @@ const theaterValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
             theaterName: joi.string().required(),
-            status: joi.boolean().required(),
-
-        })
+         })
         const { error } = option.validate(req.body)
         // console.log(option)
         if (error) {
