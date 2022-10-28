@@ -1,5 +1,6 @@
 const joi = require('joi')
 
+
 const regValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
@@ -7,7 +8,7 @@ const regValidator = async (req, res, next) => {
             email: joi.string().email().required(),
             phone: joi.number().required(),
             password: joi.string().required(),
-                 })
+        })
         const { error } = option.validate(req.body)
         if (error) {
             return res.status(400).json({
@@ -65,7 +66,7 @@ const movieValidator = async (req, res, next) => {
             movieName: joi.string().required(),
             duration: joi.number().required(),
             releaseDate: joi.date().required(),
-                   })
+        })
         const { error } = option.validate(req.body)
         if (error) {
             return res.status(400).json({
@@ -81,11 +82,11 @@ const movieValidator = async (req, res, next) => {
 const showValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
-            movieId: joi.string().required(),
-            startAt: joi.date().required(),
-            endDate: joi.date().required(),
-            startDate: joi.date().required(),
             screenId: joi.string().required(),
+            movieId: joi.string().required(),
+            showTiming: joi.string().required(),
+            showDate: joi.date().required(),
+            endDate: joi.date().required(),
         })
         const { error } = option.validate(req.body)
         if (error) {
@@ -123,16 +124,29 @@ const screenValidator = async (req, res, next) => {
 const seatValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
-           
             screenId: joi.string().required(),
-            // totalSeat: joi.array().items(
-            //     joi.object({
-            //         seatNo: joi.number().required(),
-            //            })
-            // ).required(),
-            // seatsRemaining: joi.number().required(),
-            TicketPrice: joi.number().required(),
-            
+            showTimeId: joi.string().required(),
+            seatNo: joi.number().required(),
+        })
+        const { error } = option.validate(req.body)
+        if (error) {
+            return res.status(400).json({
+                message: error.message
+            })
+        } else {
+            next()
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const bookValidator = async (req, res, next) => {
+    try {
+        let option = joi.object().keys({
+            screenId: joi.string().required(),
+            showTimeId: joi.string().required(),
+            // seatNo: joi.number().required(),
         })
         const { error } = option.validate(req.body)
         if (error) {
@@ -147,5 +161,12 @@ const seatValidator = async (req, res, next) => {
     }
 }
 module.exports = {
-    regValidator, logvalidator, theaterValidator,movieValidator, showValidator, screenValidator, seatValidator
+    regValidator, 
+    logvalidator,
+     theaterValidator,
+      movieValidator,
+       showValidator,
+        screenValidator, 
+        seatValidator,
+        bookValidator
 }

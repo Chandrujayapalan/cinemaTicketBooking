@@ -10,18 +10,19 @@ subAdminRouter.post("/login", validator.logvalidator, controller.login)
 
 subAdminRouter.post("/movie", validator.movieValidator, [auth.authenticating, auth.subAdmin], controller.createMovie)
 subAdminRouter.get("/movie", [auth.authenticating, auth.subAdmin], controller.getMovie)
-subAdminRouter.put("/movie", validator.movieValidator, [auth.authenticating, auth.subAdmin], controller.updateMovie)
+subAdminRouter.put("/movie/:id", [auth.authenticating, auth.subAdmin], controller.updateMovie)
 
 
 subAdminRouter.get("/theater", [auth.authenticating, auth.subAdmin], controller.getAllTheater)
 
 subAdminRouter.post("/screen", validator.screenValidator ,[auth.authenticating, auth.subAdmin], controller.createScreen)
 subAdminRouter.get("/screen/:theaterId", [auth.authenticating, auth.subAdmin], controller.getScreen)
+subAdminRouter.put("/screen/:id", [auth.authenticating, auth.subAdmin], controller.updateScreen)
 
 
-subAdminRouter.post("/show", [auth.authenticating, auth.subAdmin], controller.createShowTiming)
+subAdminRouter.post("/show", validator.showValidator ,[auth.authenticating, auth.subAdmin], controller.createShowTiming)
 subAdminRouter.get("/show", [auth.authenticating, auth.subAdmin], controller.getShow)
-subAdminRouter.put("/show", [auth.authenticating, auth.subAdmin], controller.createShowTiming)
+subAdminRouter.put("/show/:id", [auth.authenticating, auth.subAdmin], controller.updateShow)
 
 
 

@@ -57,7 +57,7 @@ const login = async (req, res, next) => {
         } else {
             return res.json({
                 status: 400,
-                message: 'no user found in admin'
+                message: 'no admin found'
             })
         }
     }

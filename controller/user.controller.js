@@ -6,6 +6,7 @@ const Screen = require('../model/screen')
 const User = require('../model/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const moment = require('moment')
 const register = async (req, res, next) => {
     try {
         let { name, email, phone, password } = req.body
@@ -74,7 +75,6 @@ const login = async (req, res, next) => {
         })
     }
 }
-
 const getMovie = async (req, res, next) => {
     try {
         let { movieName } = req.query
@@ -128,8 +128,7 @@ const getShow = async (req, res, next) => {
 }
 const createSeat = async (req, res, next) => {
     try {
-             let { seatNo } = req.body
-        let { screenId, showTimeId } = req.params
+        let { seatNo, screenId, showTimeId } = req.body
         let getScreen = await Screen.findOne({ status: true, screenId: screenId })
         console.log(getScreen.seats >= seatNo)
         if (getScreen.seats >= seatNo) {
@@ -174,21 +173,25 @@ const getSeat = async (req, res, next) => {
     try {
         let { screenId, showTimeId } = req.params
         let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId })
-        let getScreen = await Screen.find({ _id: screenId, status: true })
-        console.log(getScreen)
+        let getScreen = await Screen.findOne({ _id: screenId, status: true })
         let seats = getSeat.length
-        getScreen = getScreen.map(a => {
-            return {
-                bookedSeats: getSeat.map(a => a.seatNo),
-                totalSeats: a.seats,
-                totalSeatsRemaing: a.seats - seats
-            }
-        })
+        let availableSeat = []
+        for (let i = 1; i <= getScreen.seats; i++) {
+            availableSeat.push(i)
+        }
+        let filterSeat = getSeat.map(b => b.seatNo)
+        availableSeat = availableSeat.filter(c => !filterSeat.includes(c))
+        let bookingSeats = {
+            bookedSeats: getSeat.map(b => b.seatNo),
+            availableSeat: availableSeat,
+            totalSeats: getScreen.seats,
+            totalSeatsRemaing: getScreen.seats - seats
+        }
 
         return res.status(200).json({
             status: 200,
             message: 'data fetch successfully',
-            data: getScreen
+            data: bookingSeats
         })
     } catch (error) {
         console.log(error)
@@ -203,35 +206,49 @@ const getSeat = async (req, res, next) => {
 
 const createBooking = async (req, res, next) => {
     try {
-        let { screenId, showTimeId } = req.params
-        let getScreen = await Screen.findOne({ screenId: screenId })
-        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId, userId: req.user.id }).populate({
-            path: 'showTimeId', populate: {
-                path: "movieId"
-            }
-        })
-        let seatNumber = getSeat.map(a => a.seatNo)
-        let totalPrice = getSeat.length * getScreen.ticketPrice
-        let movieName = getSeat.map(a => a.showTimeId.movieId.movieName)
-        movieName = movieName[0]
-        let dateTime = getSeat.map(a => a.showTimeId.showTiming)
-        dateTime = dateTime[0]
+        let { screenId, showTimeId } = req.body
+        let getScreen = await Screen.findOne({ screenId: screenId, status: true }).populate('theaterId')
+        // console.log(getScreen)
+        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId, userId: req.user.id })
+            .populate({
+                path: 'screenId',
+                populate: {
+                    path: "theaterId"
 
+                },
+            })
+            .populate({
+                path: 'showTimeId',
+                populate: {
+                    path: "movieId"
+                }
+            })
+        let totalPrice = getSeat.map(a => a.screenId.ticketPrice)
         let theaterName = getSeat.map(a => a.screenId.theaterId.theaterName)
         theaterName = theaterName[0]
+        let seatNumber = getSeat.map(a => a.seatNo)
+        totalPrice = getSeat.length * totalPrice[0]
+        let screenName = getSeat.map(a => a.screenId.screenName)
+        screenName = screenName[0]
+        let movieName = getSeat.map(a => a.showTimeId.movieId.movieName)
+        movieName = movieName[0]
+        let dateTime = getSeat.map(a => moment(a.showTimeId.startDate).format("YYYY-MM-DD") + " " + a.showTimeId.showTiming)
+        dateTime = dateTime[0]
 
-        console.log(dateTime)
+        let findBook = await Booking.find({ seatNumber: { $in: seatNumber  } , userId : req.user.id})
+
+
         let booking = new Booking({
             movieName: movieName,
-            screenName: getScreen.screenName,
+            screenName: screenName,
             theaterName: theaterName,
             dateTime: dateTime,
             seatNumber: seatNumber,
             totalPrice: totalPrice,
             userId: req.user.id
         })
-        console.log(booking)
-        await booking.save()
+        // console.log(booking)
+        // await booking.save() 
         return res.status(200).json({
             status: 200,
             message: 'Added successfully',
@@ -246,4 +263,4 @@ const createBooking = async (req, res, next) => {
         })
     }
 }
-module.exports = { register , login ,getMovie, getShow, createBooking, createSeat, getSeat }
+module.exports = { register, login, getMovie, getShow, createBooking, createSeat, getSeat }

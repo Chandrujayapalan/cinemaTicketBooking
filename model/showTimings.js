@@ -16,8 +16,8 @@ const showSchema = new Schema({
     showTiming: {
         type: String,
         required: true,
-        },
-    startDate: {
+    },
+    showDate: {
         type: Date,
         required: true,
     },

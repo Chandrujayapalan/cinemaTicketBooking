@@ -5,17 +5,12 @@ const Schema = mongoose.Schema
 const seatSchema = new Schema({
     screenId: {
         type: Schema.Types.ObjectId,
-        ref: "Theater",
+        ref: "Screen",
         required: true,
     },
     seatNo: {
         type: Number
     },
-    // bookingId: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Booking",
-    //     required: true,
-    // },
     showTimeId: {
         type: Schema.Types.ObjectId,
         ref: "ShowTime",

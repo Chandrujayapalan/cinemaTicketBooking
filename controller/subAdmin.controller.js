@@ -27,7 +27,7 @@ const register = async (req, res, next) => {
                 data: subAdmin
             })
         } else {
-            return res.json({ status: 400, message: "Already exists" })
+            return res.status(400).json({ status: 400, message: "Already exists" })
         }
     }
     catch (error) {
@@ -62,7 +62,7 @@ const login = async (req, res, next) => {
         } else {
             return res.json({
                 status: 400,
-                message: 'no user found in subAdmin'
+                message: 'no subAdmin found '
             })
         }
     }
@@ -103,7 +103,7 @@ const getAllTheater = async (req, res, next) => {
 const createMovie = async (req, res, next) => {
     try {
         let { movieName, duration, releaseDate } = req.body
-        let findMovie = await Movie.findOne({ movieName: movieName})
+        let findMovie = await Movie.findOne({ movieName: movieName })
         if (!findMovie) {
             let movie = new Movie({
                 movieName: movieName,
@@ -152,25 +152,27 @@ const getMovie = async (req, res, next) => {
 
 const updateMovie = async (req, res, next) => {
     try {
-        let { movieName, duration, releaseDate } = req.body
-        let findMovie = await Movie.findOne({ movieName: movieName })
-        if (!findMovie) {
-            let movie = new Movie({
-                movieName: movieName,
-                duration: duration,
-                releaseDate: releaseDate
-            })
-            await movie.save()
-            return res.status(200).json({
-                status: 200,
-                message: 'Added successfully',
-                data: movie
-            })
-        } else {
+        let { status } = req.body
+        let { id } = req.params
+        let findMovie = await Movie.find({ _id: id, status: true })
+        console.log(findMovie)
+        if (!findMovie.length) {
             return res.status(400).json({
                 status: 400,
-                message: "Already exists"
+                message: "no movies"
             })
+
+        } else {
+            let movie = {
+                status: status,
+            }
+            findMovie = await Movie.findByIdAndUpdate({ _id: id }, { $set: movie }, { new: true })
+            return res.status(200).json({
+                status: 200,
+                message: 'updated successfully',
+                data: findMovie
+            })
+
         }
     } catch (error) {
         console.log(error)
@@ -181,7 +183,6 @@ const updateMovie = async (req, res, next) => {
         })
     }
 }
-
 
 const createScreen = async (req, res, next) => {
     try {
@@ -202,7 +203,7 @@ const createScreen = async (req, res, next) => {
                 data: screen
             })
         } else {
-            return res.json({ status: 400, message: "Already exists" })
+            return res.status(400).json({ status: 400, message: "Already exists" })
         }
     } catch (error) {
         console.log(error)
@@ -233,31 +234,64 @@ const getScreen = async (req, res, next) => {
         })
     }
 }
+const updateScreen = async (req, res, next) => {
+    try {
+        let { status, ticketPrice, seats } = req.body
+        let { id } = req.params
+        let findScreen = await Screen.findOne({ _id: id, status: true })
+        console.log(findScreen)
+        if (!findScreen) {
+            return res.status(400).json({
+                status: 400,
+                message: "no Screens"
+            })
+
+        } else {
+            let screen = {
+                status: status || findScreen.status,
+                seats: seats || findScreen.seats,
+                ticketPrice: ticketPrice || findScreen.ticketPrice,
+            }
+            screen = await Screen.findByIdAndUpdate({ _id: id }, { $set: screen }, { new: true })
+            return res.status(200).json({
+                status: 200,
+                message: 'updated successfully',
+                data: screen
+            })
+
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
 
 const createShowTiming = async (req, res, next) => {
     try {
-        let { screenId, movieId, showTiming ,startDate, endDate } = req.body
-        let getScreen = await ShowTime.find({ screenId: screenId ,  movieId: movieId ,  showTiming: showTiming  })
-        if (!getScreen.length){
-        let show = new ShowTime({
-            screenId: screenId,
-            movieId: movieId,
-            showTiming: showTiming,
-            startDate: startDate,
-            endDate: endDate
-
-               })
-        await show.save()
-        return res.status(200).json({
-            status: 200,
-            message: 'Added successfully',
-            data: show
-        })}else{
-            return res.json({ status: 400, message: "Already exists" })
-
+        let { screenId, movieId, showTiming, showDate, endDate } = req.body
+        let getScreen = await ShowTime.find({ screenId: screenId, movieId: movieId, showTiming: showTiming, showDate: showDate })
+        if (!getScreen.length) {
+            let show = new ShowTime({
+                screenId: screenId,
+                movieId: movieId,
+                showTiming: showTiming,
+                showDate: showDate,
+                endDate: endDate
+            })
+            await show.save()
+            return res.status(200).json({
+                status: 200,
+                message: 'Added successfully',
+                data: show
+            })
+        } else {
+            return res.status(400).json({ status: 400, message: "Already exists" })
         }
-
-     } catch (error) {
+    } catch (error) {
         console.log(error)
         return res.status(400).json({
             status: 400,
@@ -289,16 +323,43 @@ const getShow = async (req, res, next) => {
         })
     }
 }
+const updateShow = async (req, res, next) => {
+    try {
+        let { status } = req.body
+        let { id } = req.params
+        let showTime = {
+                status: status ,
+            }
+        showTime = await ShowTime.findByIdAndUpdate({ _id: id }, { $set: showTime }, { new: true })
+        if (showTime)
+            return res.status(200).json({
+                status: 200,
+                message: 'updated successfully',
+                data: showTime
+            })
+
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
 
 module.exports = {
     register,
     login,
     createMovie,
-    getMovie, 
+    getMovie,
     updateMovie,
     getAllTheater,
     createScreen,
     getScreen,
+    updateScreen,
     createShowTiming,
     getShow,
+    updateShow,
 }
