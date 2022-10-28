@@ -152,7 +152,7 @@ const getShow = async (req, res, next) => {
         let getShow2 = getShow.filter(a => a.movieId !== null)
         let getShow3 = getShow.filter(a => a.screenId.theaterId !== null)
         let getShow4 = getShow.filter(a => moment(a.showDate).format("YYYY-MM-DD") === date)
-        console.log(getShow4)
+   
         if (!getShow4.length){
             return res.status(400).json({
                 status: 400,
@@ -160,8 +160,6 @@ const getShow = async (req, res, next) => {
 
             })
         }
-
-        // console.log( getTheater2, getTheater3)
         if (!getShow2.length){
             return res.status(400).json({
                 status: 400,
