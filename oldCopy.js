@@ -1,9 +1,9 @@
-const Booking = require('../model/booking')
-const Movie = require('../model/movie')
-const Seat = require('../model/seat')
-const ShowTime = require('../model/showTimings')
-const Screen = require('../model/screen')
-const User = require('../model/user')
+const Booking = require('./model/booking')
+const Movie = require('./model/movie')
+const Seat = require('./model/seat')
+const ShowTime = require('./model/showTimings')
+const Screen = require('./model/screen')
+const User = require('./model/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
@@ -130,7 +130,7 @@ const createSeat = async (req, res, next) => {
     try {
         let { seatNo, screenId, showTimeId } = req.body
         let getSeat = await Seat.find({ screenId: screenId, seatNo: { $in: seatNo }, showTimeId: showTimeId })
-
+    
         if (!getSeat.length) {
             let seats = seatNo.map(a => {
                 return {
@@ -139,8 +139,8 @@ const createSeat = async (req, res, next) => {
                     seatNo: a,
                     userId: req.user.id
                 }
-            })
-            await Seat.insertMany(seats)
+            })        
+          await Seat.insertMany(seats)
             let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId, userId: req.user.id })
                 .populate({
                     path: 'screenId',
@@ -177,23 +177,19 @@ const createSeat = async (req, res, next) => {
                 userId: req.user.id
             })
             // console.log(booking)
-            await booking.save()
+            await booking.save() 
             return res.status(200).json({
                 status: 200,
                 message: 'Added successfully',
                 data: booking
             })
-
-
+         
         } else {
             return res.status(400).json({
                 status: 400,
                 message: 'please select another seat from the following',
             })
         }
-
-
-
       
     } catch (error) {
         console.log(error)
@@ -240,4 +236,79 @@ const getSeat = async (req, res, next) => {
 }
 
 
-module.exports = { register, login, getMovie, getShow, createSeat, getSeat }
+const createBooking = async (req, res, next) => {
+    try {
+        let { screenId, showTimeId } = req.body
+        let getScreen = await Screen.findOne({ screenId: screenId, status: true }).populate('theaterId')
+        // console.log(getScreen)
+        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId, userId: req.user.id })
+            .populate({
+                path: 'screenId',
+                populate: {
+                    path: "theaterId"
+
+                },
+            })
+            .populate({
+                path: 'showTimeId',
+                populate: {
+                    path: "movieId"
+                }
+            })
+        let totalPrice = getSeat.map(a => a.screenId.ticketPrice)
+        let theaterName = getSeat.map(a => a.screenId.theaterId.theaterName)
+        theaterName = theaterName[0]
+        let seatNumber = getSeat.map(a => a.seatNo)
+        totalPrice = getSeat.length * totalPrice[0]
+        let screenName = getSeat.map(a => a.screenId.screenName)
+        screenName = screenName[0]
+        let movieName = getSeat.map(a => a.showTimeId.movieId.movieName)
+        movieName = movieName[0]
+        let dateTime = getSeat.map(a => moment(a.showTimeId.startDate).format("YYYY-MM-DD") + " " + a.showTimeId.showTiming)
+        dateTime = dateTime[0]
+
+        // let findBook = await Booking.find({ seatNumber: { $in: seatNumber  } , userId : req.user.id})
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
+module.exports = { register, login, getMovie, getShow, createBooking, createSeat, getSeat } 
+ let { seatNo, screenId, showTimeId } = req.body
+        let getScreen = await Screen.findOne({ status: true, screenId: screenId })
+        console.log(getScreen.seats >= seatNo)
+        if (getScreen.seats >= seatNo) {
+            let getSeat = await Seat.find({ screenId: screenId, seatNo: seatNo, showTimeId: showTimeId })
+            if (!getSeat.length) {
+                let seat = new Seat({
+                    screenId: screenId,
+                    seatNo: seatNo,
+                    showTimeId: showTimeId,
+                    userId: req.user.id
+                })
+                await seat.save()
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Added successfully',
+                    data: seat
+                })
+            } else {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'please select another seat from the following',
+                })
+            }
+        } else {
+            return res.status(400).json({
+                status: 400,
+                message: 'screen has limited seats',
+
+            })
+        }

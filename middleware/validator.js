@@ -126,7 +126,7 @@ const seatValidator = async (req, res, next) => {
         let option = joi.object().keys({
             screenId: joi.string().required(),
             showTimeId: joi.string().required(),
-            seatNo: joi.number().required(),
+            seatNo: joi.array().required(),
         })
         const { error } = option.validate(req.body)
         if (error) {

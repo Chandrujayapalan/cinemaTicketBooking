@@ -6,7 +6,7 @@ const seatSchema = new Schema({
     screenId: {
         type: Schema.Types.ObjectId,
         ref: "Screen",
-        required: true,
+        // required: true,
     },
     seatNo: {
         type: Number
@@ -14,12 +14,12 @@ const seatSchema = new Schema({
     showTimeId: {
         type: Schema.Types.ObjectId,
         ref: "ShowTime",
-        required: true,
+        // required: true,
     },
     userId :{
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true,
+        // required: true,
     },
     status: {
         type: Boolean,
