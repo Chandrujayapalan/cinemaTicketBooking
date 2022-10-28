@@ -102,9 +102,10 @@ const showValidator = async (req, res, next) => {
 const screenValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
-            movieId: joi.string().required(),
             screenName: joi.string().required(),
-            // showTimeId: joi.string().required(),
+            theaterId: joi.string().required(),
+            seats: joi.number().required(),
+            ticketPrice: joi.number().required(),
         })
         const { error } = option.validate(req.body)
         if (error) {

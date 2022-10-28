@@ -150,13 +150,45 @@ const getMovie = async (req, res, next) => {
     }
 }
 
+const updateMovie = async (req, res, next) => {
+    try {
+        let { movieName, duration, releaseDate } = req.body
+        let findMovie = await Movie.findOne({ movieName: movieName })
+        if (!findMovie) {
+            let movie = new Movie({
+                movieName: movieName,
+                duration: duration,
+                releaseDate: releaseDate
+            })
+            await movie.save()
+            return res.status(200).json({
+                status: 200,
+                message: 'Added successfully',
+                data: movie
+            })
+        } else {
+            return res.status(400).json({
+                status: 400,
+                message: "Already exists"
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
+
 
 const createScreen = async (req, res, next) => {
     try {
         let { screenName, theaterId, seats, ticketPrice } = req.body
-        let getScreen = await Screen.find({ theaterId: theaterId })
-        getScreen = getScreen.find(a => a.screenName === screenName)
-        if (!getScreen) {
+        let getScreen = await Screen.find({ theaterId: theaterId, screenName: screenName })
+        //  console.log(getScreen)
+        if (!getScreen.length) {
             let screen = new Screen({
                 theaterId: theaterId,
                 screenName: screenName,
@@ -262,10 +294,11 @@ module.exports = {
     register,
     login,
     createMovie,
-    getMovie,
+    getMovie, 
+    updateMovie,
     getAllTheater,
     createScreen,
     getScreen,
     createShowTiming,
-    getShow
+    getShow,
 }

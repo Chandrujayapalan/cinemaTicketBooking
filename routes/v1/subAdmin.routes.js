@@ -10,6 +10,8 @@ subAdminRouter.post("/login", validator.logvalidator, controller.login)
 
 subAdminRouter.post("/movie", validator.movieValidator, [auth.authenticating, auth.subAdmin], controller.createMovie)
 subAdminRouter.get("/movie", [auth.authenticating, auth.subAdmin], controller.getMovie)
+subAdminRouter.put("/movie", validator.movieValidator, [auth.authenticating, auth.subAdmin], controller.updateMovie)
+
 
 subAdminRouter.get("/theater", [auth.authenticating, auth.subAdmin], controller.getAllTheater)
 

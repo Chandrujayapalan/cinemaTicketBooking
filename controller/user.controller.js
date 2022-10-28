@@ -110,7 +110,8 @@ const getShow = async (req, res, next) => {
                 populate: {
                     path: "theaterId"
                 }
-            }).populate('movieId')
+            })
+            .populate('movieId')
         return res.status(200).json({
             status: 200,
             message: 'data fetch successfully',
