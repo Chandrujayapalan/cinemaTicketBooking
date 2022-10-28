@@ -132,6 +132,7 @@ const updateTheater = async (req, res, next) => {
         // let userId = req.user.id
         let { id } = req.params
         let { theaterName, status } = req.body
+       
         let getTheater = await Theater.findById(id)
         console.log(getTheater)
         if (!getTheater) {

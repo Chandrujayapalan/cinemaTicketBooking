@@ -44,6 +44,7 @@ const theaterValidator = async (req, res, next) => {
     try {
         let option = joi.object().keys({
             theaterName: joi.string().required(),
+          
          })
         const { error } = option.validate(req.body)
         // console.log(option)
@@ -85,6 +86,8 @@ const showValidator = async (req, res, next) => {
             showTiming: joi.string().required(),
             showDate: joi.date().required(),
             endDate: joi.date().required(),
+        
+            
         })
         const { error } = option.validate(req.body)
         if (error) {
