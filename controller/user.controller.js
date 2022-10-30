@@ -191,11 +191,13 @@ const getShow = async (req, res, next) => {
 const getSeat = async (req, res, next) => {
     try {
         let { screenId, showTimeId } = req.params
-        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId })
-        let getScreen = await Screen.findOne({ _id: screenId, status: true })
+        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId }).populate('screenId')
         let seats = getSeat.length
+        let a = getSeat.find(a=>a)
+        a = a.screenId.seats
+        console.log(a,"adsad")
         let availableSeat = []
-        for (let i = 1; i <= getScreen.seats; i++) {
+        for (let i = 1; i <= a; i++) {
             availableSeat.push(i)
         }
         let filterSeat = getSeat.map(b => b.seatNo)
@@ -203,9 +205,10 @@ const getSeat = async (req, res, next) => {
         let bookingSeats = {
             bookedSeats: getSeat.map(b => b.seatNo),
             availableSeat: availableSeat,
-            totalSeats: getScreen.seats,
-            totalSeatsRemaing: getScreen.seats - seats
+            totalSeats: a,
+            totalSeatsRemaing: a - seats
         }
+        console.log(bookingSeats)
 
         return res.status(200).json({
             status: 200,
