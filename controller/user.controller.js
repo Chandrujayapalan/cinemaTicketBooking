@@ -190,8 +190,8 @@ const getShow = async (req, res, next) => {
 }
 const getSeat = async (req, res, next) => {
     try {
-        let { screenId, showTimeId } = req.params
-        let getSeat = await Seat.find({ status: true, screenId: screenId, showTimeId: showTimeId }).populate('screenId')
+        let {showTimeId } = req.params
+        let getSeat = await Seat.find({ status: true, showTimeId: showTimeId }).populate('screenId')
         let seats = getSeat.length
         let a = getSeat.find(a=>a)
         a = a.screenId.seats
@@ -202,6 +202,14 @@ const getSeat = async (req, res, next) => {
         }
         let filterSeat = getSeat.map(b => b.seatNo)
         availableSeat = availableSeat.filter(c => !filterSeat.includes(c))
+        if (!availableSeat.length){
+            return res.status(400).json({
+                status: 400,
+                message: "No seats Available",
+              
+            })
+
+        }
         let bookingSeats = {
             bookedSeats: getSeat.map(b => b.seatNo),
             availableSeat: availableSeat,
@@ -279,7 +287,7 @@ const createBooking= async (req, res, next) => {
             await booking.save()
             return res.status(200).json({
                 status: 200,
-                message: 'Added successfully',
+                message: 'Booking successfully',
                 data: booking
             })
 
@@ -304,5 +312,60 @@ const createBooking= async (req, res, next) => {
     }
 }
 
+const getBooking = async (req, res, next) => {
+    try {
+        let { bookingId } = req.query
+       
+        let getBooking = await Booking.findById(bookingId)
+        if (!getBooking) {
+            return res.status(400).json({
+                status: 400,
+                message: 'no bookings found',
 
-module.exports = { register, login, getMovie, getShow, getSeat, createBooking }
+            })
+        } else {
+            return res.status(200).json({
+                status: 200,
+                message: 'data fetch successfully',
+                data: getBooking
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
+
+const getAllBooking = async (req, res, next) => {
+    try {
+        
+
+        let getBooking = await Booking.find({userId :req.user.id})
+        if (!getBooking.length) {
+            return res.status(400).json({
+                status: 400,
+                message: 'no bookings found',
+
+            })
+        } else {
+            return res.status(200).json({
+                status: 200,
+                message: 'data fetch successfully',
+                data: getBooking
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
+
+module.exports = { register, login, getMovie, getShow, getSeat, createBooking, getBooking, getAllBooking }
