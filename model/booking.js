@@ -30,6 +30,10 @@ const bookSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true 
+    },
+    status: {
+        type: Boolean,
+        default : true
     }
 },
     { timestamps: true })

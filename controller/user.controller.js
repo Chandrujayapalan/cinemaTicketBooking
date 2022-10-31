@@ -190,11 +190,13 @@ const getShow = async (req, res, next) => {
 }
 const getSeat = async (req, res, next) => {
     try {
-        let {showTimeId } = req.params
-        let getSeat = await Seat.find({ status: true, showTimeId: showTimeId }).populate('screenId')
+        let {screenId , showTimeId } = req.params
+        let getScreen = await Screen.findOne({_id :screenId})
+        console.log(getScreen)
+        let getSeat = await Seat.find({ status: true, screenId: screenId ,showTimeId: showTimeId })
+        console.log(getSeat)
         let seats = getSeat.length
-        let a = getSeat.find(a=>a)
-        a = a.screenId.seats
+        let a = getScreen.seats
         console.log(a,"adsad")
         let availableSeat = []
         for (let i = 1; i <= a; i++) {
@@ -344,7 +346,7 @@ const getAllBooking = async (req, res, next) => {
     try {
         
 
-        let getBooking = await Booking.find({userId :req.user.id})
+        let getBooking = await Booking.find({userId :req.user.id ,status :true})
         if (!getBooking.length) {
             return res.status(400).json({
                 status: 400,
@@ -368,4 +370,34 @@ const getAllBooking = async (req, res, next) => {
     }
 }
 
-module.exports = { register, login, getMovie, getShow, getSeat, createBooking, getBooking, getAllBooking }
+const cancelBooking = async (req, res, next) => {
+    try {
+
+        let {id} = req.params
+        let {status} = req.body
+        if(id){
+        let getBooking = await Booking.findByIdAndUpdate(  id ,{ status: status })
+         await Seat.deleteMany({ seatNo: { $in: getBooking.seatNumber }})
+
+            return res.status(200).json({
+                status: 200,
+                message: 'ticket canceled successfully'
+            })
+      
+      }else {
+            return res.status(400).json({
+                status: 400,
+                message: 'no booking is there',
+            })
+      }
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: 400,
+            err: " Something went Wrong",
+            message: error.message
+        })
+    }
+}
+module.exports = { register, login, getMovie, getShow, getSeat, createBooking, getBooking, getAllBooking, cancelBooking }
