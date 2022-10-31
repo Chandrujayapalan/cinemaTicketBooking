@@ -197,7 +197,6 @@ const getSeat = async (req, res, next) => {
         console.log(getSeat)
         let seats = getSeat.length
         let a = getScreen.seats
-        console.log(a,"adsad")
         let availableSeat = []
         for (let i = 1; i <= a; i++) {
             availableSeat.push(i)
@@ -375,15 +374,15 @@ const cancelBooking = async (req, res, next) => {
 
         let {id} = req.params
         let {status} = req.body
-        if(id){
+       
         let getBooking = await Booking.findByIdAndUpdate(  id ,{ status: status })
+        if (getBooking.status == true) {
          await Seat.deleteMany({ seatNo: { $in: getBooking.seatNumber }})
 
             return res.status(200).json({
                 status: 200,
                 message: 'ticket canceled successfully'
             })
-      
       }else {
             return res.status(400).json({
                 status: 400,
